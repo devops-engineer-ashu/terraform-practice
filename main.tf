@@ -5,12 +5,12 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet " "main" {
-  cidr_block = "10.0.1.0/24"
-  vpc_id = aws_vpc.main.id
+resource "aws_subnet" "main" {
+  cidr_block              = "10.0.1.0/24"
+  vpc_id                  = aws_vpc.main.id
   map_public_ip_on_launch = true
   tags = {
-    Name = "Main"
+    Name = "main"
   }
 }
 
@@ -39,9 +39,9 @@ resource "aws_route_table_association" "rta" {
 
 
 resource "aws_security_group" "main" {
-   vpc_id      = aws_vpc.main.id  
+  vpc_id = aws_vpc.main.id
 
-    ingress {
+  ingress {
     description = "Allow SSH"
     from_port   = 22
     to_port     = 22
@@ -49,14 +49,14 @@ resource "aws_security_group" "main" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-   ingress {
+  ingress {
     description = "Allow HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-    egress {
+  egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -68,16 +68,17 @@ resource "aws_security_group" "main" {
   }
 }
 
-resource "aws_instance" "my-instance" {
-  ami           = "ami-0735c191cf9147540"
-  instance_type = "t2.micro"
-  vpc_security_group_ids = aws_security_group.main.id
+resource "aws_instance" "my_terraweek_instance" {
+  ami                         = "ami-014d82945a82dfba3"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.main.id
+  vpc_security_group_ids      = [aws_security_group.main.id]
   associate_public_ip_address = true
-
+  
   tags = {
     Name = "TerraWeek-Server"
   }
   lifecycle {
-  create_before_destroy = true
-}
+    create_before_destroy = true
+  }
 }
