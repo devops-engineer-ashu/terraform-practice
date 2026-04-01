@@ -82,3 +82,8 @@ resource "aws_instance" "my_terraweek_instance" {
     create_before_destroy = true
   }
 }
+
+resource "aws_s3_bucket" "my_aws_bucket" {
+  depends_on = [aws_instance.my_terraweek_instance]
+  bucket = "terraweek_ashu_s3_bucket"
+}
